@@ -275,7 +275,8 @@
     "test": "node ./node_modules/vscode/bin/test",
     "build-server": "./node_modules/.bin/gulp build_server",
     "watch-server": "./node_modules/.bin/gulp watch_server",
-    "tslint": "./node_modules/.bin/gulp tslint"
+    "tslint": "./node_modules/.bin/gulp tslint",
+    "vsce-package": "vsce package"
   },
   "devDependencies": {
     "typescript": "^2.3.4",
@@ -288,7 +289,8 @@
     "gulp-tslint": "^8.1.1",
     "tslint": "^5.5.0",
     "gulp-decompress": "2.0.1",
-    "gulp-download": "0.0.1"
+    "gulp-download": "0.0.1",
+    "vsce": "^1.37.5"
   },
   "dependencies": {
     "vscode-languageclient": "^3.5.0",
