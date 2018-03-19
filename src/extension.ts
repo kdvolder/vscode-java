@@ -1,6 +1,5 @@
 'use strict';
 
-import { experiment } from './sts-experiment';
 import * as path from 'path';
 import * as os from 'os';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
@@ -9,7 +8,7 @@ import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus } from './protocol';
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ExecuteClientCommandRequest } from './protocol';
 
 let oldConfig;
 let lastStatus;
@@ -77,7 +76,6 @@ export function activate(context: ExtensionContext) {
 				// Create the language client and start the client.
 				let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
-				context.subscriptions.push(experiment(languageClient));
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
@@ -136,6 +134,9 @@ export function activate(context: ExtensionContext) {
 								}
 							}
 						});
+					});
+					languageClient.onRequest(ExecuteClientCommandRequest.type, (params) => {
+						return commands.executeCommand(params.command, ...params.arguments);
 					});
 					commands.registerCommand(Commands.OPEN_OUTPUT, () => {
 						languageClient.outputChannel.show(ViewColumn.Three);
